@@ -1,6 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <stdarg.h>
+#include <process.h>
+#include <string.h>
 
 #ifndef _LOGGER_H_
 #define _LOGGER_H_
@@ -13,15 +16,17 @@
 typedef struct LOGGER {
     int level;
     char *datetime_format;
+    char buf[];
 } LOGGER;
 
 typedef LOGGER* Logger;
 
 Logger Logger_create();
+void Logger_destory(Logger l);
 void log_add(Logger l, int level, const char *msg);
-void log_debug(Logger l, const char *msg);
-void log_info(Logger l, const char *msg);
-void log_warn(Logger l, const char *msg);
-void log_error(Logger l, const char *msg);
+void log_debug(Logger l, const char *fmt, ...);
+void log_info(Logger l, const char *fmt, ...);
+void log_warn(Logger l, const char *fmt, ...);
+void log_error(Logger l, const char *fmt, ...);
 
 #endif
