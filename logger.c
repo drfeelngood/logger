@@ -11,16 +11,12 @@ Logger Logger_create()
     return(l);
 }
 
-void log_add(Logger l, int level, const char *fmt, va_list ap)
+void log_add(Logger l, int level, const char *msg)
 {
     if (level < l->level) return;
 
     time_t meow = time(NULL);
-    int n = vscprintf(fmt, ap);
     char buf[64];
-    char *msg;
-    
-    vsprintf(b2, n, fmt, ap);
     
     strftime(buf, sizeof(buf), l->datetime_format, localtime(&meow));
     printf("[%d] %c, %s : %s\n", (int)getpid(), LOG_LEVEL_CHARS[level], buf, msg);
@@ -28,33 +24,44 @@ void log_add(Logger l, int level, const char *fmt, va_list ap)
 
 void log_debug(Logger l, const char *fmt, ...)
 { 
-    va_list va;
-    va_start(va, fmt);
-    log_add(l, LOG_DEBUG, fmt, va);
-    va_end(va);
+    va_list ap;
+    char msg[LOG_MAX_MSG_LEN];
+
+    va_start(ap, fmt);
+    vsnprintf(msg, sizeof(msg), fmt, ap);
+    log_add(l, LOG_DEBUG, msg);
+    va_end(ap);
 }
 
 void log_info(Logger l, const char *fmt, ...)
 { 
+    va_list ap;
+    char msg[LOG_MAX_MSG_LEN];
     
-    va_list va;
-    va_start(va, fmt);
-    log_add(l, LOG_INFO, fmt, ...); 
-    va_end(va);
+    va_start(ap, fmt);
+    vsnprintf(msg, sizeof(msg), fmt, ap);
+    log_add(l, LOG_INFO, msg); 
+    va_end(ap);
 }
 
 void log_warn(Logger l, const char *fmt, ...)
 { 
-    va_list va;
-    va_start(va, fmt);
-    log_add(l, LOG_WARN, fmt, ...); 
-    va_end(va);
+    va_list ap;
+    char msg[LOG_MAX_MSG_LEN];
+    
+    va_start(ap, fmt);
+    vsnprintf(msg, sizeof(msg), fmt, ap);
+    log_add(l, LOG_WARN, msg); 
+    va_end(ap);
 }
 
 void log_error(Logger l, const char *fmt, ...)
 { 
-    va_list va;
-    va_start(va, fmt);
-    log_add(l, LOG_ERROR, fmt, ...); 
-    va_end(va);
+    va_list ap;
+    char msg[LOG_MAX_MSG_LEN];
+    
+    va_start(ap, fmt);
+    vsnprintf(msg, sizeof(msg), fmt, ap);
+    log_add(l, LOG_ERROR, msg); 
+    va_end(ap);
 }
