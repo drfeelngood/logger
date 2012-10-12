@@ -7,10 +7,12 @@ int main(int argc, char **)
 {
     Logger l = Logger_create();
 
-    int x = 0;
-    while ( x < 100 ) {
-        log_info(l, "log log log");
-        x++;
-    }
+    log_debug(l, "%d", __LINE__);
+    
+    log_info(l, "Hello world");
+
+    log_warn(l, "Foo[%-30s] Bar[%d]", foo, bar); 
+
+    log_error(l, "Foo Bar");
 }
 ```
