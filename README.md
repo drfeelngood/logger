@@ -2,8 +2,8 @@
 
 Simple library for uniform logging.
 
-```
-int main(int argc, char **)
+```c
+int main()
 {
     Logger l = Logger_create();
 
