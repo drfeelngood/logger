@@ -1,4 +1,4 @@
-# ANSI C Logger
+# ANSI C Logger [![Build Status](https://secure.travis-ci.org/drfeelngood/logger.png)](http://travis-ci.org/drfeelngood/logger)
 
 Simple library for uniform logging.
 
