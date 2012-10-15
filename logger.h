@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdarg.h>
+#include <unistd.h>
 
 #ifndef _LOGGER_H_
 #define _LOGGER_H_
