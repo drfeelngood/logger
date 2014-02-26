@@ -1,46 +1,53 @@
 # Logger Makefile
-
 uname_S := $(shell sh -c 'uname -s 2>/dev/null || echo not')
 
 CC=gcc
-CFLAGS= -Wall -g
-WARNINGS= -Wall -W -Wstrict-prototypes -Wwrite-strings
-DEBUG?= -g -ggdb
+AR=ar rcs
+CFLAGS=-Wall -W -Wstrict-prototypes -Wwrite-strings
+DEBUG?=-g -ggdb
 
+LIBNAME=liblogger
 MAJOR_VERSION := $(shell cat VERSION |cut -d\. -f1)
 MINOR_VERSION := $(shell cat VERSION |cut -d\. -f2)
 
-LIBNAME=liblogger
-DYLIBSUFFIX=so
-DYLIB_MINOR_NAME=$(LIBNAME).$(MAJOR_VERSION).$(MINOR_VERSION).$(DYLIBSUFFIX)
-DYLIB_MAJOR_NAME=$(LIBNAME).$(MAJOR_VERSION).$(DYLIBSUFFIX)
-DYLIBNAME=$(LIBNAME).$(DYLIBSUFFIX)
-DYLIB_MAKE_CMD=$(CC) -shared -Wl,-soname,$(DYLIB_MINOR_NAME) -o $(DYLIBNAME) $(LDFLAGS)
+STLIBNAME=$(LIBNAME).a
+STLIB_MAKE_CMD=$(CC) -o $(STLIBNAME) $(LDFLAGS)
 
+DYLIBNAME=$(LIBNAME).so
+DYLIB_MINOR_NAME=$(DYLIBNAME).$(MAJOR_VERSION).$(MINOR_VERSION)
+DYLIB_MAJOR_NAME=$(DYLIBNAME).$(MAJOR_VERSION)
 ifeq ($(uname_S),Darwin)
-	DYLIBSUFFIX=dylib
-	DYLIB_MINOR_NAME=$(LIBNAME).$(MAJOR_VERSION).$(MINOR_VERSION).$(DYLIBSUFFIX)
-	DYLIB_MAJOR_NAME=$(LIBNAME).$(MAJOR_VERSION).$(DYLIBSUFFIX)
-	DYLIB_MAKE_CMD=$(CC) -shared -Wl,-install_name,$(DYLIB_MINOR_NAME) -o $(DYLIBNAME) $(LDFLAGS)
+	DYLIBNAME=$(LIBNAME).dylib
+	DYLIB_MAKE_CMD=$(CC) -dynamiclib -Wl,-install_name,$(DYLIB_MINOR_NAME) \
+    		-o $(DYLIB_MINOR_NAME)
+else
+	DYLIB_MAKE_CMD=$(CC) -fPIC -shared -Wl,-soname,$(DYLIB_MINOR_NAME) \
+		-o $(DYLIB_MINOR_NAME)
 endif
 
 SRC=logger.c
 OBJ=$(SRC:.c=.o)
-
 PREFIX?=/usr/local
 INSTALL_LIB_PATH=$(PREFIX)/lib
 INSTALL_INCLUDE_PATH=$(PREFIX)/include
-
 INSTALL?= cp -a
 
-
-all: $(DYLIBNAME)
+all: $(DYLIBNAME) $(STLIBNAME)
     
-$(DYLIBNAME): $(OBJ)
-	$(DYLIB_MAKE_CMD) $(OBJ)
+$(DYLIBNAME): $(DYLIB_MAJOR_NAME)
+	ln -sf $< $@
+
+$(DYLIB_MINOR_NAME): $(OBJ)
+	$(DYLIB_MAKE_CMD) $<
+
+$(DYLIB_MAJOR_NAME): $(DYLIB_MINOR_NAME)
+	ln -sf $< $@
+
+$(STLIBNAME): $(OBJ)
+	$(AR) $(STLIBNAME) $<
 
 .c.o:
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 install: $(DYLIBNAME)
 	mkdir -p $(INSTALL_INCLUDE_PATH) $(INSTALL_LIB_PATH)
@@ -49,5 +56,8 @@ install: $(DYLIBNAME)
 	cd $(INSTALL_LIB_PATH) && ln -sf $(DYLIB_MAJOR_NAME) $(DYLIB_MAJOR_NAME)
 	cd $(INSTALL_LIB_PATH) && ln -sf $(DYLIB_MINOR_NAME) $(DYLIBNAME)
 
+#test:
+	#$(CC) $(CFLAGS) -g -ggdb test.c -o test -L. -llogger
+
 clean:
-	rm -f $(DYLIBNAME) $(OBJ)
+	rm -f $(DYLIBNAME) $(DYLIB_MINOR_NAME) $(DYLIB_MAJOR_NAME) $(STLIBNAME) $(OBJ)
