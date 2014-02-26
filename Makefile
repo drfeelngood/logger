@@ -21,7 +21,7 @@ ifeq ($(uname_S),Darwin)
 	DYLIB_MAKE_CMD=$(CC) -dynamiclib -Wl,-install_name,$(DYLIB_MINOR_NAME) \
     		-o $(DYLIB_MINOR_NAME)
 else
-	DYLIB_MAKE_CMD=$(CC) -fPIC -shared -Wl,-soname,$(DYLIB_MINOR_NAME) \
+	DYLIB_MAKE_CMD=$(CC) -shared -Wl,-soname,$(DYLIB_MINOR_NAME) \
 		-o $(DYLIB_MINOR_NAME)
 endif
 
@@ -47,7 +47,7 @@ $(STLIBNAME): $(OBJ)
 	$(AR) $(STLIBNAME) $<
 
 .c.o:
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -fPIC -c $< -o $@
 
 install: $(DYLIBNAME)
 	mkdir -p $(INSTALL_INCLUDE_PATH) $(INSTALL_LIB_PATH)
