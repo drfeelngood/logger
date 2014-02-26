@@ -8,7 +8,7 @@ int main()
     char *foo;
     int bar = 10;
 
-    Logger l = Logger_create();
+    Logger *l = Logger_create();
     l->level = LOG_DEBUG;
 
     log_debug(l, "%d", __LINE__);
@@ -19,6 +19,8 @@ int main()
     log_warn(l, "Foo[%-30s] Bar[%d]", foo, bar); 
 
     log_error(l, "Foo Bar");
+
+    Logger_free(l);
 }
 ```
 
