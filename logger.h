@@ -23,8 +23,8 @@ struct _Logger {
 
 typedef struct _Logger Logger;
 
-Logger * Logger_create( void );
-void Logger_free(Logger *l);
+Logger * Logger_create(const char *filename);
+void     Logger_free(Logger *l);
 void log_add(Logger *l, int level, const char *msg);
 void log_debug(Logger *l, const char *fmt, ...);
 void log_info(Logger *l, const char *fmt, ...);

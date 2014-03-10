@@ -1,6 +1,6 @@
 #include "logger.h"
 
-Logger * Logger_create( void )
+Logger * Logger_create(const char *filename)
 {
     Logger *l = (Logger *)malloc(sizeof(Logger));
     if ( l == NULL )
@@ -8,14 +8,28 @@ Logger * Logger_create( void )
 
     l->datetime_format = (char *)"%Y-%m-%d %H:%M:%S";
     l->level = LOG_INFO;
-    l->fp    = stdout;
+    if (filename == NULL)
+        l->fp = stdout;
+    else {
+        l->fp = fopen(filename, "w");
+        if (l->fp == NULL) {
+            free(l);
+            return NULL;
+        } else {
+            setvbuf(l->fp, NULL, _IOLBF, BUFSIZ);
+        }
+    }
 
     return l;
 }
 
 void Logger_free(Logger *l)
 {
-    free(l);
+    if (l != NULL) {
+        if (fileno(l->fp) != STDOUT_FILENO)
+            fclose(l->fp);
+        free(l);
+    }
 }
 
 void log_add(Logger *l, int level, const char *msg)
