@@ -8,7 +8,7 @@ int main()
     char *foo;
     int bar = 10;
 
-    Logger *l = Logger_create();
+    Logger *l = Logger_create(NULL);
     l->level = LOG_DEBUG;
 
     log_debug(l, "%d", __LINE__);
@@ -24,9 +24,19 @@ int main()
 }
 ```
 
+Prints in stdout:
+
 ```
 [38493] D, 2012-10-12 09:57:58 : 26
 [38493] I, 2012-10-12 09:57:58 : Hello world
 [38493] W, 2012-10-12 09:57:58 : Foo[Information                   ] Bar[10]
 [38493] E, 2012-10-12 09:57:58 : Foo Bar
+```
+
+You can select a file instead of stdout and save the logs to a file with:
+
+```c
+...
+Logger *l = Logger_create("/tmp/log_file");
+...
 ```
