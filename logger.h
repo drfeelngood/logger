@@ -1,11 +1,15 @@
+#ifndef _LOGGER_H_
+#define _LOGGER_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
 #include <stdarg.h>
 #include <unistd.h>
-
-#ifndef _LOGGER_H_
-#define _LOGGER_H_
 
 #define LOG_DEBUG 0
 #define LOG_INFO  1
@@ -30,5 +34,9 @@ void log_debug(Logger *l, const char *fmt, ...);
 void log_info(Logger *l, const char *fmt, ...);
 void log_warn(Logger *l, const char *fmt, ...);
 void log_error(Logger *l, const char *fmt, ...);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

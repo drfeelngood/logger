@@ -30,3 +30,11 @@ int main()
 [38493] W, 2012-10-12 09:57:58 : Foo[Information                   ] Bar[10]
 [38493] E, 2012-10-12 09:57:58 : Foo Bar
 ```
+
+Assign an io device other than stdout.
+
+```c
+Logger *l = Logger_create();
+l->fp = fopen("/var/log/program.log");
+// ...
+```

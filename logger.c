@@ -15,7 +15,11 @@ Logger * Logger_create( void )
 
 void Logger_free(Logger *l)
 {
-    free(l);
+    if ( l != NULL ) {
+        if ( fileno(l->fp) != STDOUT_FILENO )
+            fclose(l->fp);
+        free(l);
+    }
 }
 
 void log_add(Logger *l, int level, const char *msg)
